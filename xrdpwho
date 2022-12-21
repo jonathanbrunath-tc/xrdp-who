@@ -1,0 +1,23 @@
+#!/bin/bash
+
+case $1 in
+	-xrdp)
+		./xrdp-who.sh
+		;;
+	-xorg)
+		./xrdp-who-xorg.sh
+		;;
+	-xvnc)
+		./xrdp-who-xvnc.sh
+		;;
+	*)
+		echo ""
+		echo "Command Format: xrdpwho <arg>"
+		echo ""
+		echo "Arguments:"
+		echo " -xorg : Show info on all current xorg sessions (recommended option for quick xrdp user status check)"
+		echo " -xrdp : Show info on all current xrdp sessions"
+		echo " -xvnc : Show info on all current xvnc sessions"
+		echo ""
+		;;
+esac
