@@ -1,5 +1,9 @@
 #!/bin/bash
 
+installPath="/usr/local/bin/xrdpwho"
+targetPath="/opt/xrdp-who/xrdpwho"
+permissionsValue="775"
+
 case $1 in
 	-xrdp)
 		./xrdp-who.sh
@@ -9,6 +13,39 @@ case $1 in
 		;;
 	-xvnc)
 		./xrdp-who-xvnc.sh
+		;;
+	'--install')
+		echo ""
+		if [ -e "$installPath" ]; then
+			echo "ERROR: file already exists at target install path \"$installPath\""
+		else
+			echo "Creating symlink at install path \"$installPath\" to target \"$targetPath\"..."
+			sudo ln -s "$targetPath" "$installPath"
+
+			echo "Setting permissions for \"$targetPath\"..."
+			sudo chmod "$permissionsValue" "$targetPath"
+
+			echo "Setting permissions for \"$installPath\"..."
+			sudo chmod "$permissionsValue" "$installPath"
+		fi
+		if [ -L "$installPath" ]; then
+			if [ $(readlink -f "$installPath") == "$targetPath" ]; then
+				if [ $(stat -L -c "%a" "$installPath") == "$permissionsValue" ]; then
+					if [ $(stat -L -c "%a" "$targetPath") == "$permissionsValue" ]; then
+						echo "Install successful"
+					else
+						echo "ERROR: Failed to set permissions on target path \"$targetPath\""
+					fi
+				else
+					echo "ERROR: Failed to set permissions on install path \"$installPath\""
+				fi
+			else
+				echo "ERROR: Failed to create symlink at install path \"$installPath\" to target \"$targetPath\""
+			fi
+		else
+			echo "ERROR: Failed to create symlink at install path \"$installPath\" to target \"$targetPath\""
+		fi
+		echo ""
 		;;
 	*)
 		echo ""
